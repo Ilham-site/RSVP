@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RSVP Iftar - Time With Crew '26</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-emerald-950 bg-opacity-5 min-h-screen py-10 px-4 flex items-center justify-center">
+
+    <div class="max-w-md w-full bg-white rounded-2xl shadow-xl overflow-hidden border border-emerald-100">
+        
+        <!-- Ruang Paparan Poster -->
+        <div class="bg-emerald-900 text-center relative">
+            <!-- Tukar 'poster.jpg' kepada nama fail gambar poster anda -->
+            <img src="poster.jpg" alt="Poster Iftar Time With Crew" class="w-full h-auto object-cover max-h-[500px]">
+        </div>
+
+        <!-- Borang RSVP -->
+        <div class="p-6 sm:p-8">
+            <div class="text-center mb-6">
+                <h1 class="text-2xl font-bold text-emerald-900">Pengesahan Kehadiran (RSVP)</h1>
+                <p class="text-sm text-gray-600 mt-1">Sila isi butiran di bawah untuk simpan tempat duduk anda.</p>
+            </div>
+
+            <form id="rsvpForm" class="space-y-4">
+                <!-- Nama Ringkas -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nama Ringkas</label>
+                    <input type="text" id="nama" name="nama" required 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-600 focus:outline-none" 
+                        placeholder="Cth: Ilham">
+                </div>
+
+                <!-- Kolej -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Kolej / Kediaman</label>
+                    <input type="text" id="kolej" name="kolej" required 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-600 focus:outline-none" 
+                        placeholder="Cth: Kolej Pendeta Za'ba / Rumah Sewa">
+                </div>
+
+                <!-- No. Telefon -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">No. Telefon (WhatsApp)</label>
+                    <input type="tel" id="telefon" name="telefon" required 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-600 focus:outline-none" 
+                        placeholder="Cth: 0194184759">
+                </div>
+
+                <!-- Keperluan Kenderaan -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Perlukan Kenderaan atau Tak?</label>
+                    <select id="kenderaan" name="kenderaan" required 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-600 focus:outline-none bg-white">
+                        <option value="">Sila pilih...</option>
+                        <option value="Ya, perlukan kenderaan">Ya, perlukan tumpangan / kenderaan</option>
+                        <option value="Tidak, ada kenderaan sendiri">Tidak, ada kenderaan sendiri</option>
+                    </select>
+                </div>
+
+                <!-- Butang Hantar -->
+                <button type="submit" id="submitBtn" 
+                    class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-semibold py-3 rounded-lg transition duration-200 shadow-md">
+                    Hantar RSVP
+                </button>
+            </form>
+
+            <!-- Mesej Berjaya -->
+            <div id="successMessage" class="hidden mt-4 p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-lg text-center text-sm font-medium">
+                Alhamdulillah! RSVP anda telah berjaya direkodkan. Jumpa di sana!
+            </div>
+        </div>
+    </div>
+
+    <!-- Skrip JavaScript untuk Sambungan ke Google Sheet -->
+    <script>
+        // Gantikan URL di bawah dengan URL Web App Apps Script anda
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbyDq_VYB8R0c38JFf9fRxZa5Xq80nhPfvByR0YFznLtmlH1qZmoQqAZCyOaB0wONQLMw/exec';
+        const form = document.getElementById('rsvpForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const successMessage = document.getElementById('successMessage');
+
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sedang menghantar...';
+
+            const data = {
+                nama: document.getElementById('nama').value,
+                kolej: document.getElementById('kolej').value,
+                telefon: document.getElementById('telefon').value,
+                kenderaan: document.getElementById('kenderaan').value
+            };
+
+            fetch(scriptURL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(() => {
+                successMessage.classList.remove('hidden');
+                form.reset();
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Hantar RSVP';
+            })
+            .catch(error => {
+                console.error('Error!', error.message);
+                alert('Ralat berlaku. Sila cuba lagi.');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Hantar RSVP';
+            });
+        });
+    </script>
+</body>
+</html>
